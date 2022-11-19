@@ -4,15 +4,15 @@ I was presented with finding the best way to construct and represent data for an
 
 You can see my initial thought process in the comments at the bottom of graph_hax.py, and how I systematically built up the data structures.
 
-My initial approach was to tree recursively create permutations of bitstrings in n-dimensional space. For example, for a 3d hypercube, nodes are bitstrings of size 3 (i.e. 000), and there are 8 (2^n) of them. Each 'adjacent' node is connected by an edge, where adjacency is defined by a single bit flip. Thus, you can begin with the '0' and '1' bitstrings, and then pop on a '0' or '1' to each of those, and so on until you are n levels deep. This procedure is described in graph_hax_ia.py.
+My initial approach was to tree recursively create permutations of bitstrings in n-dimensional space. For example, for a 3d hypercube, nodes are bitstrings of size 3 (i.e. 000), and there are 8 (2^n) of them. Each 'adjacent' node is connected by an edge, where adjacency is defined by a single bit flip. Thus, you can begin with the '0' and '1' bitstrings, and then pop on a '0' or '1' to each of those, and so on until you are n-levels deep. This procedure is described in graph_hax_ia.py.
 
-However, there was a real need to treat these nodes as objects, to easily manipulate and store them for DFS. The main issue with meshing this and my previous method of building up the node bitstrings was every node object would need to have a list of its neighbors (reachable nodes). However, when intializing the first couple of nodes there is limited information available about the rest of the cube. I solved this issue by changing how I create the graph. Below is the algorithm pseudocode:
+However, there is a real need to treat these nodes as objects in order to be able to easily manipulate and reference them for DFS. The main issue with meshing OOP and my previous methodology of building up the nodes is that every node object needs to have a list of its neighbors (reachable nodes) as an instance attribute. However, when intializing the first couple of nodes there is limited information available about the rest of the cube. Think of localization and mapping; how does a node know where it is before it's space is defined? I solved this issue by creatively adapting the very procedure via which I build up the graph. Below is the algorithm pseudocode:
 
-graph class
+Graph class
 - nodes list
 - dfs method
 
-node class
+Node class
 - bitstring
 - neighbor nodes list
 
