@@ -1,6 +1,6 @@
 # HyperCubeDFS
 
-The problem I was presented with was finding the best way to construct and represent data for an n-dimensional HyperCube/graph, and to later write an efficient~ DFS (depth first search) algorithm for navigating any subgraph of the cube. 
+I was presented with finding the best way to construct and represent data for an n-dimensional HyperCube/graph, and to later write an ~efficient~ DFS (depth first search) algorithm for navigating any subgraph of the cube. 
 
 You can see my initial thought process in the comments at the bottom of the code, and how I systematically built up the classes.
 
