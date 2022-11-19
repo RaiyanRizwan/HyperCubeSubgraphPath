@@ -11,7 +11,7 @@ My initial approach was to tree recursively create permutations of bitstrings in
 
 However, there is a real need to treat these nodes as objects in order to be able to easily manipulate and reference them for DFS. The **main issue with meshing OOP and my previous methodology** of building up the nodes is that every node object needs to have a list of its neighbors (reachable nodes) as an instance attribute. However, when intializing the first couple of nodes there is limited information available about the rest of the cube. Think of localization and mapping; how does a node know where it is before it's space is defined? I solved this issue by creatively adapting the very procedure via which I build up the graph. 
 
-## HyperCube/Node Initialization Algorithm Pseudocode:
+### HyperCube/Node Initialization Algorithm Pseudocode:
 
 Graph class
 - nodes list
