@@ -17,7 +17,7 @@ Node class
 - neighbor nodes list
 
 1. create the all-zero bitstring node, add it to the graph object, compute_neighbors()
-2. compute_neighbors() --> create a new_node object by flipping each bit of the previous_node (all-zero in this case) and check whether new_node is in the graph: {loop for each bit flip}
+2. compute_neighbors() --> create a new_node object by flipping each bit of the previous_node (all-zero in this case) and check whether new_node is in the graph: (loop for each bit flip)
    3a. if new_node is not in the graph, add it. then call new_node.compute_neighbors()
    3b. if new_node is in the graph (avoid double creation), add new_node to previous_node's neighbors list, and previous_node to new_node's neighbors list
 4. eventually expand out to the full cube!
