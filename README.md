@@ -5,7 +5,7 @@ I was presented with finding the best way to construct and represent data for an
 ### Initial Approach
 You can peek into how my brain works in the comments at the bottom of graph_hax.py, which describe in detail how I systematically built up the data structures.
 
-My initial approach was to tree recursively create permutations of bitstrings in n-dimensional space. For example, for a 3d hypercube, nodes are bitstrings of size 3 (i.e. 000), and there are 8 (2^n) of them. Each 'adjacent' node is connected by an edge, where adjacency is defined by a single bit flip. Thus, you can begin with the '0' and '1' bitstrings, and then pop on a '0' or '1' to each of those, and so on until you are n-levels deep. This procedure is described in graph_hax_ia.py.
+My initial approach was to tree recursively create permutations of bitstrings in n-dimensional space. For example, for a 3d hypercube, nodes are bitstrings of size 3 (i.e. 000), and there are 8 (2^n) of them. Each 'adjacent' node is connected by an edge, where adjacency is defined by a single bit flip. Thus, you can begin with the '0' and '1' bitstrings, and then pop on a '0' or '1' to each of those, and so on until you are n-levels deep. This procedure is described in graph_hax_initial_approach_.py.
 
 ### Problems & OOP Solution
 
