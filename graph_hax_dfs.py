@@ -1,3 +1,5 @@
+import random
+
 def hamming_weight(btstr):
 	return sum([eval(e) for e in btstr])
 
@@ -89,6 +91,57 @@ class Graph:
 		node1, node2 = self.nodes[n1_i], self.nodes[n2_i]
 		node1.adjacent.remove(node2)
 		node2.adjacent.remove(node1)
+
+	def subgraph(self, num_edges):
+		"""
+		Generates a subgraph of this graph with num_edges number of edges removed. Randomly picks nodes from which to remove edges.
+		If a node has no edges, moves onto the next node (taking advantage of for loop generator properties) until all edges are gone.
+
+		>>> g = Graph(3)
+		>>> g.subgraph(self, 3)
+		[node: 000, neighbors: ['100', '010', '001'], cheapest_hamming: 100, 
+		node: 100, neighbors: ['000', '110'], cheapest_hamming: 000, 
+		node: 110, neighbors: ['010', '100', '111'], cheapest_hamming: 010, 
+		node: 010, neighbors: ['110'], cheapest_hamming: 110, 
+		node: 011, neighbors: ['111', '001', '010'], cheapest_hamming: 001, 
+		node: 111, neighbors: ['011', '101', '110'], cheapest_hamming: 011, 
+		node: 101, neighbors: ['001', '111', '100'], cheapest_hamming: 001, 
+		node: 001, neighbors: ['101', '011', '000'], cheapest_hamming: 000]
+		
+		>>> Graph(3).subgraph(30) # we'd expect 24 edges (3 per node, 8 nodes) to be removed
+		not enough edges
+		not enough edges
+		not enough edges
+		not enough edges
+		not enough edges
+		not enough edges
+		[node: 000, neighbors: [], cheapest_hamming: isolated, 
+		node: 100, neighbors: [], cheapest_hamming: isolated, 
+		node: 110, neighbors: [], cheapest_hamming: isolated, 
+		node: 010, neighbors: [], cheapest_hamming: isolated, 
+		node: 011, neighbors: [], cheapest_hamming: isolated, 
+		node: 111, neighbors: [], cheapest_hamming: isolated, 
+		node: 101, neighbors: [], cheapest_hamming: isolated, 
+		node: 001, neighbors: [], cheapest_hamming: isolated]
+		"""
+
+		num_removed = 0
+		lst_of_nodes = [self.nodes[random.randint(0, len(self.nodes)-1)] for _ in range(num_edges)]
+		for node in lst_of_nodes:
+			if node.adjacent:
+				node.adjacent.pop()
+				num_removed+=1
+			else:
+				ind_to_avoid = self.index_of_bitstr(node.bitstr)
+				if ind_to_avoid+1 >= len(self.nodes):
+					print('not enough edges')
+				else:
+					lst_of_nodes.append(self.nodes[ind_to_avoid+1])
+
+		return g.nodes
+
+	def index_of_bitstr(self, bitstr):
+		return list(map(lambda node: node.bitstr, self.nodes)).index(bitstr)
 
 	def __repr__(self):
 		return f'{list(map(lambda node: node.bitstr, self.nodes))}'
@@ -250,13 +303,6 @@ continue onwards
 				# change it up so we're looking for nearest hamming
 				# works but not always... something is off
 		"""
-
-
-
-
-
-
-
 
 
 
