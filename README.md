@@ -61,3 +61,5 @@ Old pseudocode for DFS:
 1. If the end_goal_node is within the neighbors list of the start_node, return that path. 
 2. Otherwise, calculate the hamming weights of each neighbor_node in the start_node's neighbors list, and visit the optimal_node (closest hamming weight to end_goal_node) if it has not been visited already. If it has been visited, visit the next most optimal_node, and so on, unless all possible neighbor nodes have been visited and there is no path to the end goal. 
 3. Then, perform the same procedure as ii. starting @ the optimal node we just traversed to, and keeping track of the path so far. 
+
+The old material can still be accessed via V1.
