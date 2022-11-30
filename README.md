@@ -33,9 +33,18 @@ This method systematically builds up the graph while simultaneously assigning ne
 
 The idea behind the **DFS algorithm** is relatively simple, though it took me a while to write from scratch based on some graph theory YT videos and the concept of hamming weight. Pseudocode:
 
-1.  If the end_goal_node is within the neighbors list of the start_node, return that path. 
-2. Otherwise, calculate the hamming weights of each neighbor_node in the start_node's neighbors list, and visit the optimal_node (closest hamming weight to end_goal_node) if it has not been visited already. If it has been visited, visit the next most optimal_node, and so on, unless all possible neighbor nodes have been visited and there is no path to the end goal. 
-3. Then, perform the same procedure as ii. starting @ the optimal node we just traversed to, and keeping track of the path so far. 
+variables:
+start_node - current location
+target_node - target location
+path - list of nodes traversed so far, initialized to [start_node]
+black_list - list of nodes that can't lead to target_node, initialized to []
+
+1. IF the end_goal_node is within the neighbors list of the start_node, return that path. ELSE 2.
+2. IF all of the neighbors of the start_node are on black_list, return 'no path'. ELSE 3.
+3. IF start_node has reachable neighbors that are not all on path + black_list, 4. ELSE 6.
+4. Calculate the hamming weights of each neighbor_node in the start_node's neighbors list, and visit the optimal_node (closest hamming weight to end_goal_node) IF it has not been visited already (path) and it's not on black_list. ELSE, visit the next most optimal_node, and so on. IF all possible neighbor nodes have been visited or are black listed and there is no path to the end goal, return 'no path'. ELSE 5.
+5. Perform the same procedure as 2. where start_node is set to the optimal_node we just traversed to and appended to path. 
+6. Blacklist start_node and set start_node = the last visited node. This way, start_node will never be visited again and we can begin traversal from where we were before. Also pop blacklisted node from path (doesn't lead to target), and loop back to perform 2. 
 
 In this way, the search algorithm returns the most efficient possible path to the end goal, without recursive processing. 
 
@@ -44,3 +53,11 @@ This project took me about 5-7 hours. I was very, very surprised that the algori
 
 ## Random Subgraph Update
 Added subgraph function to Graph class that randomly eliminates the given number of edges from the graph, notably making clever use of the iterator-nature of for loops. Pleased to see that DFS and all other functionality still works as intended.
+
+## DFS for Random Subgraph Update
+The old DFS function (who's algo has been copy-pasted below and replaced above) didn't quite work in the more complex cases of the random subgraph update. In particular, the implementation of DFS backtracking after exhaustively searching a route wasn't up to par. The introduction of intermediate island nodes and non-hamming cycles within the cube were key realizations in updating the function, which now uses a blacklist system to reroute until all possible routes are either blacklisted or recently visited (at which point no path exists) or the target node is reached. Note: the new algo is still not recursive.
+
+Old pseudocode for DFS:
+1. If the end_goal_node is within the neighbors list of the start_node, return that path. 
+2. Otherwise, calculate the hamming weights of each neighbor_node in the start_node's neighbors list, and visit the optimal_node (closest hamming weight to end_goal_node) if it has not been visited already. If it has been visited, visit the next most optimal_node, and so on, unless all possible neighbor nodes have been visited and there is no path to the end goal. 
+3. Then, perform the same procedure as ii. starting @ the optimal node we just traversed to, and keeping track of the path so far. 
