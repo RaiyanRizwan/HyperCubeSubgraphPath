@@ -58,8 +58,9 @@ class Graph:
 		end_node = self.nodes[en_i]
 
 		path = [start_node]
+		black_listed = []
 
-		if not start_node.adjacent or not end_node.adjacent:
+		if not start_node.adjacent:
 			return 'no path found' # island nodes
 		elif end_node in start_node.adjacent: 
 			path.append(end_node) # end node is directly 
@@ -68,22 +69,36 @@ class Graph:
 			en_h = hamming_weight(end_node.bitstr)
 
 			while not start_node == end_node:
+				
+				#print("start:", start_node.bitstr)
+				#print("blacklisted:", black_listed)
+				#print("path", [n.bitstr for n in path])
 
-				sn_neighbors_h = hammings(start_node.adjacent) # sorted hamming weights of all neighbors
-				optimal = min(sn_neighbors_h, key= lambda pair: abs(en_h - hamming_weight(pair[0].bitstr)))
-				o_n = optimal[0] # optimal node to go to
+				if black_listed and all(e in black_listed for e in start_node.adjacent):
+					return 'no path' # exhausted all path possibilities
 
-				while o_n in path:
+				if start_node.adjacent and not all(e in path + black_listed for e in start_node.adjacent):
 
-					if not sn_neighbors_h: 
-						return "no path" # exhausted all path possibilities
-
-					sn_neighbors_h.remove(optimal)
+					sn_neighbors_h = hammings(start_node.adjacent) # sorted hamming weights of all neighbors
 					optimal = min(sn_neighbors_h, key= lambda pair: abs(en_h - hamming_weight(pair[0].bitstr)))
-					o_n = optimal[0]
+					o_n = optimal[0] # optimal node to go to
 
-				path.append(o_n)
-				start_node = path[-1]
+					while o_n in path or o_n in black_listed:
+
+						if not sn_neighbors_h:
+							return "no path" 
+
+						sn_neighbors_h.remove(optimal)
+						optimal = min(sn_neighbors_h, key= lambda pair: abs(en_h - hamming_weight(pair[0].bitstr)))
+						o_n = optimal[0]
+
+					path.append(o_n)
+					start_node = path[-1]
+
+				else:
+					black_listed.append(start_node)
+					start_node = path[-2]
+					path.pop()
 
 		return f'edges: {len(path)-1}, path: {list(map(lambda node: node.bitstr,path))}'
 
@@ -138,7 +153,7 @@ class Graph:
 				else:
 					lst_of_nodes.append(self.nodes[ind_to_avoid+1])
 
-		return g.nodes
+		return self.nodes
 
 	def index_of_bitstr(self, bitstr):
 		return list(map(lambda node: node.bitstr, self.nodes)).index(bitstr)
@@ -172,8 +187,20 @@ class Node:
 	def __repr__(self):
 		return f'node: {self.bitstr}, neighbors: {list(map(lambda node: node.bitstr, self.adjacent))}, cheapest_hamming: {cheapest_hamming(self.adjacent)}'
 
+def demo():
 
+	dim = eval(input("dimension?\n"))
+	g = Graph(dim)
+	print(g)
 
+	while True:
+		choice = eval(input("0: subgraph, 1: hamming path\n"))
+
+		if not choice:
+			num = eval(input("how many edges to remove?\n"))
+			print(g.subgraph(num))
+		else:
+			print(g.dfs(g.index_of_bitstr('0'*dim), g.index_of_bitstr('1'*dim)))
 
 # how can we represent a hypercube?
 """
@@ -303,6 +330,13 @@ continue onwards
 				# change it up so we're looking for nearest hamming
 				# works but not always... something is off
 		"""
+
+
+
+
+
+
+
 
 
 
