@@ -55,7 +55,7 @@ This project took me about 5-7 hours. I was very, very surprised that the algori
 Added subgraph function to Graph class that randomly eliminates the given number of edges from the graph, notably making clever use of the iterator-nature of for loops. Pleased to see that DFS and all other functionality still works as intended.
 
 ## DFS for Random Subgraph Update
-The old DFS function (who's algo has been copy-pasted below and replaced above) didn't quite work in the more complex cases of the random subgraph update. In particular, the implementation of DFS backtracking after exhaustively searching a route wasn't up to par. The introduction of intermediate island nodes and non-hamming cycles within the cube were key realizations in updating the function, which now uses a blacklist system to reroute until all possible routes are either blacklisted or recently visited (at which point no path exists) or the target node is reached. Note: the new algo is still not recursive.
+The old DFS function (who's algo has been copy-pasted below and replaced above) didn't quite work in the more complex cases of the random subgraph update. In particular, the implementation of DFS backtracking after exhaustively searching a route wasn't working. Acknowledging the introduction of intermediate island nodes and non-hamming cycles within the cube were key realizations in updating the function, which now uses a blacklist system to reroute until all possible routes are either blacklisted or recently visited (at which point no path exists) or the target node is reached. Note: the new algo is described above in the DFS algo section, and is still not recursive.
 
 Old pseudocode for DFS:
 1. If the end_goal_node is within the neighbors list of the start_node, return that path. 
