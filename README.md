@@ -1,7 +1,7 @@
 # HyperCubeDFS
 
 ***
-NOTE: After taking a course on data structures and algorithms (CS61B @ Berkeley), I have realized that this shortest path algorithm not depth first search. While it began as DFS, it is a much more efficient, specialized shortest path algorithm that doesn't follow a route to its deepest end, but rather systematically pursuses the target node based on hamming weight, backtracking when necessary... Refactor coming soon.
+NOTE: After taking a course on data structures and algorithms (CS61B @ Berkeley), I have realized that this shortest path algorithm is not depth first search. While it began as DFS, it is a much more efficient, specialized shortest path algorithm that doesn't follow a route to its deepest extent (DFS) but rather, systematically pursuses the target node based on hamming weight, backtracking only when necessary... Full refactor coming soon.
 ***
 
 I was presented with finding the best way to construct and represent data for an n-dimensional HyperCube/graph, and to later write an efficient DFS (depth first search) algorithm for navigating any subgraph of the cube. 
