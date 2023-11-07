@@ -50,9 +50,9 @@ class Graph:
                 node_neighbors.append(neighbor_node) # append to neighbors list
             self.nodes[node] = node_neighbors # update graph
                  
-    def shortest_path(self, start_bitstr, end_bitstr):
+    def path(self, start_bitstr, end_bitstr):
         """
-        Finds shortest possible path from start node to end node. 
+        Finds a path from start node to end node. Robust against missing edges. Greedy algorithm.
         """
 
         current_node = self.decimal_Node_dict[int(start_bitstr, 2)]
