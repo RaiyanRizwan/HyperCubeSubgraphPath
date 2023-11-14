@@ -31,12 +31,13 @@ class Graph:
     '011111111111110', '111111111111110', '111111111111111']"
     """
 
-    def __init__(self, n):
+    def __init__(self, n, seed=0):
         self.nodes = {}
         self.decimal_Node_dict = {}
         self.graph(n)
         self.n = n
-
+        self.rand = random.Random(seed)
+        
     def graph(self, n):
         """O(n2^n)"""
         self.decimal_Node_dict = {d : Node(d, n) for d in range(2**n)}
@@ -58,12 +59,13 @@ class Graph:
         current_node = self.decimal_Node_dict[int(start_bitstr, 2)]
         end_node = self.decimal_Node_dict[int(end_bitstr, 2)]
 
-        path = [current_node]
-        dead_ends = []
+        ordered_path = [current_node]
+        unordered_path = set(ordered_path) # use to check contains
+        dead_ends = set()
         
         while not current_node == end_node: # until we reach our target
             neighbors = self.nodes[current_node] # neighbors list
-            if len(path) == 1 and all(neighbor in dead_ends for neighbor in neighbors) or not neighbors: # @ start with nowhere to go
+            if len(ordered_path) == 1 and all(neighbor in dead_ends for neighbor in neighbors) or not neighbors: # @ start with nowhere to go
                 return 'no path'
             
             # find optimal node to traverse to
@@ -71,22 +73,22 @@ class Graph:
             best_valid_node_difference = 1e100
             for neighbor_node in neighbors:
                 better_distance = abs(end_node.hamming_weight - neighbor_node.hamming_weight) < best_valid_node_difference
-                valid = neighbor_node not in dead_ends and neighbor_node not in path
+                valid = neighbor_node not in dead_ends and neighbor_node not in unordered_path
                 if better_distance and valid:
                     best_valid_node = neighbor_node
                     best_valid_node_difference = abs(end_node.hamming_weight - neighbor_node.hamming_weight)
 
-            if best_valid_node:
-                # traverse
-                path.append(best_valid_node)
+            if best_valid_node: # traverse
+                ordered_path.append(best_valid_node)
+                unordered_path.add(best_valid_node)
                 current_node = best_valid_node
-            else:
-                # back up
-                dead_ends.append(current_node)
-                path.pop()
-                current_node = path[-1]
+            else: # back up
+                dead_ends.add(current_node)
+                unordered_path.remove(current_node)
+                ordered_path.pop()
+                current_node = ordered_path[-1]
             
-        return f'edges: {len(path)-1}, path: {list(map(lambda node: node.bitstr, path))}' # return bit strings along the path
+        return f'edges: {len(ordered_path)-1}, path: {list(map(lambda node: node.bitstr, ordered_path))}' # return bit strings along the path
 
     def subgraph(self, num_edges):
         """
@@ -99,15 +101,13 @@ class Graph:
 
         num_removed = 0
         while num_removed < num_edges:
-            random_node = self.decimal_Node_dict[random.randint(0, 2**self.n - 1)]
+            random_node = self.decimal_Node_dict[self.rand.randint(0, 2**self.n - 1)]
             neighbors = self.nodes[random_node]
             if neighbors:
-                node_to_remove = neighbors[random.randint(0, len(neighbors) - 1)]
+                node_to_remove = neighbors[self.rand.randint(0, len(neighbors) - 1)]
                 self.nodes[random_node].remove(node_to_remove)
                 self.nodes[node_to_remove].remove(random_node)
                 num_removed += 1
-        
-        print(self)
 
     def __repr__(self):
         out = []
