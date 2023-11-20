@@ -1,4 +1,5 @@
 # Hyper Cube Subgraph Path
+
 11/19/23 Update
 
 I implemented A*. Run simpleDemo.py to take a look at the difference between the previous path algo and the current shortest path. Honestly, it was a lot of fun. I finally (practically, post CS61B) understand what makes a heuristic admissible and consistent. I chose hamming distance as a heuristic, since the actual path is always equal to or longer than the hamming distance between the current and target node (a similar argument can be made for consistency). Also, I happened to have to do some cheeky things to update the priority queue in Python. 
