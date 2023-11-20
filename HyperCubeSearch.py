@@ -1,20 +1,6 @@
 import random
-
-class Node:
-
-    def __init__(self, value: int, dim: int):
-        self.value = value
-        self.bitstr = str(format(self.value, f'0{dim}b'))
-        self.hamming_weight = sum([eval(e) for e in self.bitstr])
-
-    def __repr__(self):
-        return f'node: {self.bitstr}'
-
-    def __eq__(self, other_node):
-        return self.value == other_node.value
-        
-    def __hash__(self):
-        return self.value
+from Fringe import Fringe
+from Node import Node
 
 class Graph:
     """
@@ -32,11 +18,11 @@ class Graph:
     """
 
     def __init__(self, n, seed=0):
-        self.nodes = {}
-        self.decimal_Node_dict = {}
+        self.nodes_adjacency = {} # Node : neighbors[Node]
+        self.decimal_Node_dict = {} # decimal value : Node
+        self.rand = random.Random(seed)
         self.graph(n)
         self.n = n
-        self.rand = random.Random(seed)
         
     def graph(self, n):
         """O(n2^n)"""
@@ -49,11 +35,11 @@ class Graph:
                 neighbor_val = node_val + [1, -1][eval(node.bitstr[i])]*(2**exponent) # [-1, 1][ith bit value]: if 0, then 1 (flip 0 to 1) and if 1, then -1 (flip 1 to 0)
                 neighbor_node = self.decimal_Node_dict[neighbor_val] # O(1)
                 node_neighbors.append(neighbor_node) # append to neighbors list
-            self.nodes[node] = node_neighbors # update graph
+            self.nodes_adjacency[node] = node_neighbors # update graph
                  
     def path(self, start_bitstr, end_bitstr):
         """
-        Finds a path from start node to end node. Robust against missing edges. Greedy algorithm.
+        Finds a path from start node to end node. Robust against missing edges.
         """
 
         current_node = self.decimal_Node_dict[int(start_bitstr, 2)]
@@ -64,7 +50,7 @@ class Graph:
         dead_ends = set()
         
         while not current_node == end_node: # until we reach our target
-            neighbors = self.nodes[current_node] # neighbors list
+            neighbors = self.nodes_adjacency[current_node] # neighbors list
             if len(ordered_path) == 1 and all(neighbor in dead_ends for neighbor in neighbors) or not neighbors: # @ start with nowhere to go
                 return 'no path'
             
@@ -96,21 +82,60 @@ class Graph:
         If a node has no edges, moves onto the next node (taking advantage of for loop generator properties) until all edges are gone.
         """
         
-        if num_edges > len([node for neighbors in self.nodes.values() for node in neighbors]) // 2:
+        if num_edges > len([node for neighbors in self.nodes_adjacency.values() for node in neighbors]) // 2:
             return 'not enough edges'
 
         num_removed = 0
         while num_removed < num_edges:
             random_node = self.decimal_Node_dict[self.rand.randint(0, 2**self.n - 1)]
-            neighbors = self.nodes[random_node]
+            neighbors = self.nodes_adjacency[random_node]
             if neighbors:
                 node_to_remove = neighbors[self.rand.randint(0, len(neighbors) - 1)]
-                self.nodes[random_node].remove(node_to_remove)
-                self.nodes[node_to_remove].remove(random_node)
+                self.nodes_adjacency[random_node].remove(node_to_remove)
+                self.nodes_adjacency[node_to_remove].remove(random_node)
                 num_removed += 1
+
+    def shortest_path(self, start_bitstr, target_bitstr):
+        """A* algorithm. Heuristic := hamming distance from current_bitstr to target_bitstr. Any path from
+        current to target is greater than or equal in length to the hamming distance. Thus, the heuristic is admissible.
+        The heuristic is also consistent by the property that to get to a 'further' target, more bits must be flipped, and
+        thus the hamming distance between an intermediate node and the target will never be less than that of a closer node."""
+        
+        s_d = c_d = int(start_bitstr, 2) # decimal value of start bitstring
+        fringe = Fringe(self.decimal_Node_dict.keys()) # Fringe PQ [decimal_key : distance]
+        distTo = {v : float('inf') for v in self.decimal_Node_dict.keys()} # initialize distances to each node as infinity
+        fringe.remove(s_d) # remove start node from fringe
+        distTo[s_d] = 0 # set distance to start node = 0
+        edgeTo = {v: None for v in self.nodes_adjacency.keys()}
+        EDGE_LENGTH = 1 # all edges are a hamming distance of 1 in a hypercube
+        while fringe:
+            c_node = self.decimal_Node_dict[c_d] 
+            # relax neighbors
+            for neighbor in self.nodes_adjacency[c_node]: 
+                g = distTo[c_d] # distance to current node
+                h = c_node.hamming_distance(neighbor) # estimated distance from current node to target
+                n_d = neighbor.value
+                if g + EDGE_LENGTH + h < distTo[n_d]:
+                    fringe.push(n_d, g + EDGE_LENGTH + h)
+                    distTo[n_d] = g + EDGE_LENGTH
+                    edgeTo[neighbor] = c_node
+            # dequeue shortest distance vertex
+            c_d = fringe.pop().vertex
+            if c_d == int(target_bitstr, 2):
+                break
+        target_node = self.decimal_Node_dict[int(target_bitstr, 2)]
+        if not edgeTo[target_node]:
+            return "No path found."
+        # Gather path from edgeTo list
+        start_node = self.decimal_Node_dict[s_d]
+        path = [target_node]
+        while target_node != start_node:
+            path = [edgeTo[target_node]] + path
+            target_node = edgeTo[target_node]
+        return f'edges: {len(path)-1}, path: {path}'
 
     def __repr__(self):
         out = []
-        for node in self.nodes.keys():
-            out.append(f'{node.bitstr}: {", ".join([neighbor.bitstr for neighbor in self.nodes[node]])}')
+        for node in self.nodes_adjacency.keys():
+            out.append(f'{node.bitstr}: {", ".join([neighbor.bitstr for neighbor in self.nodes_adjacency[node]])}')
         return '\n'.join(out)
