@@ -5,4 +5,5 @@ I decided to revist this code, which I wrote during the fall semester of my fres
 
 Graph generation: O(n2^n)
 
-I might implement Dijksta's later to find the shortest path if it exists in the subgraph.
+# Next Steps
+Implement dynamic programming algorithm (path in subgraph O(2^n)). I read about this approach when I was reading _Quantum Speedups for Exponential-Time Dynamic Programming Algorithms_, as the best classical solve. After I take CS170 (next sem), I will update this repo yet again (or perhaps sooner). 
