@@ -1,4 +1,4 @@
-from HyperCubeSearch import Graph
+from Graph import Graph
 
 # --- DIM 4 ---
 g = Graph(4)
